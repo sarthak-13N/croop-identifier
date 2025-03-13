@@ -3,13 +3,38 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from flask import Flask, request, jsonify
 import os
+import gdown  # Import gdown to download files from Google Drive
 
+# Google Drive File ID (Replace with your actual file ID)
+FILE_ID = "YOUR_FILE_ID"
+MODEL_PATH = "crop_identy.h5"
+
+# Function to Download Model if Not Present
+def download_model():
+    if not os.path.exists(MODEL_PATH):  # Check if the model already exists
+        print("📥 Downloading model from Google Drive...")
+        url = f"https://drive.google.com/uc?id={FILE_ID}"
+        gdown.download(url, MODEL_PATH, quiet=False)
+        print("✅ Model Downloaded Successfully!")
+    else:
+        print("✅ Model already exists, skipping download.")
+
+
+
+ # Download the model before loading
+download_model()
+
+# Load the Trained Model
+print("🔄 Loading Model...")
+model = tf.keras.models.load_model(MODEL_PATH)
+print("✅ Model Loaded Successfully!")
+   
 # Initialize Flask App
 app = Flask(__name__)
 
 # Load Trained Model
-model = tf.keras.models.load_model("crop_identy.h5")
-print("✅ Model Loaded Successfully!")
+#model = tf.keras.models.load_model("crop_identy.h5")
+#print("✅ Model Loaded Successfully!")
 
 # Function to Classify Image
 def classify_image(img_path):
